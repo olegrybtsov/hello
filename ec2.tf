@@ -13,3 +13,7 @@ resource "aws_instance" "RH" {
         key_name = "mykey"
         security_groups = ["launch-wizard-1"]
 }
+
+output "lb_address" {
+  value = "${aws_alb.web.public_dns}"
+}
