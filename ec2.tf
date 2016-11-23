@@ -15,5 +15,5 @@ resource "aws_instance" "RH" {
 }
 
 output "lb_address" {
-  value = "${RH.public_dns}"
+  value = "${RH.web.public_dns}"
 }
