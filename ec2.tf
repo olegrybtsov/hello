@@ -14,6 +14,8 @@ resource "aws_instance" "RH" {
         security_groups = ["launch-wizard-1"]
 }
 
+/*
 output "lb_address" {
   value = "${RH.web.public_dns}"
 }
+*/
