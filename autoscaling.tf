@@ -1,8 +1,3 @@
-resource "aws_placement_group" "nginx" {
-  name = "nginx_group"
-  strategy = "cluster"
-}
-
 resource "aws_iam_role" "instance_role" {
   
   name = "instance_role"
@@ -73,7 +68,9 @@ resource "aws_launch_configuration" "nginx" {
   name_prefix = "nginx-cluster-"
   image_id =  "${lookup(var.aws_ami, var.aws_region)}"
   instance_type = "t2.micro"
- 
+
+  security_groups = ["${aws_security_group.default.id}"]
+
   user_data = "${data.template_file.userdata.rendered}"
 
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
@@ -84,9 +81,16 @@ resource "aws_launch_configuration" "nginx" {
 }
 
 resource "aws_autoscaling_group" "nginx" {
-  availability_zones = ["us-east-1a"]
-  min_size = 1
-  max_size = 3
+  #availability_zones = ["us-east-1a"]
+  
+  vpc_zone_identifier = ["${aws_subnet.default.id}"]
+
+  load_balancers = ["${aws_elb.web.name}"]
+
+  target_group_arns = ["${aws_alb_target_group.http.arn}"]
+
+  min_size = 3
+  max_size = 4
  
   launch_configuration = "${aws_launch_configuration.nginx.name}"
  
